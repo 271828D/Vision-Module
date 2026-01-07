@@ -1,0 +1,12 @@
+defaults:
+  - model: effb2
+  - data: dataloader
+  - training: default
+
+seed: 42
+# device: cpu  # Will be updated in code
+ckpt_path: /home/x271828/projects/DataPreprocessing/model_effb2_20251227_222421.pth  # this is for test.py
+
+hydra:
+  run:
+    dir: outputs/${model.model}/${seed}
