@@ -35,3 +35,4 @@ logs/
 *wandb*
 
 *.pth
+*.csv
