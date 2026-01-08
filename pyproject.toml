@@ -9,6 +9,7 @@ dependencies = [
     "scikit-learn>=1.8.0",
     "torch",
     "torchvision",
+    "wandb>=0.23.1",
 ]
 
 [dependency-groups]

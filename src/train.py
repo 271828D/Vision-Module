@@ -65,11 +65,13 @@ def main(cfg: DictConfig) -> None:
         model.eval()
         val_loss = 0.0
         with th.no_grad():
-            for images, labels in val_loader:
+            progress_bar_val = tqdm(val_loader, desc="Validating", total=len(val_loader))
+            for images, labels in progress_bar_val:
                 images, labels = images.to(device), labels.to(device)
                 outputs = model(images).squeeze()
                 loss = criterion(outputs, labels)
                 val_loss += loss.item()
+                progress_bar_val.set_postfix(val_loss=loss.item())
         
         val_loss /= len(val_loader)
         # Inside training loop, after validation
