@@ -23,10 +23,25 @@ class PretrainedModel(th.nn.Module):
             self.backbone = models.efficientnet_b3(weights=models.EfficientNet_B3_Weights.IMAGENET1K_V1 if pretrained else None)
 
         elif self.model_name == "mobilev3s":
-            self.backbone = models.mobilenet_v3_small(weights=models.MobileNet_V3_Large_Weights.IMAGENET1K_V1 if pretrained else None)
+            self.backbone = models.mobilenet_v3_small(weights=models.MobileNet_V3_Small_Weights.IMAGENET1K_V1 if pretrained else None)
 
         elif self.model_name == "mobilev3l":
             self.backbone = models.mobilenet_v3_large(weights=models.MobileNet_V3_Large_Weights.IMAGENET1K_V1 if pretrained else None)
+
+        elif self.model_name == "shuffnetv2":
+            self.backbone = models.shufflenet_v2_x1_0(
+                weights=models.ShuffleNet_V2_X1_0_Weights.IMAGENET1K_V1 if pretrained else None
+            )
+
+        elif self.model_name == "squeezv11":
+            self.backbone = models.squeezenet1_1(
+                weights=models.SqueezeNet1_1_Weights.IMAGENET1K_V1 if pretrained else None
+            )
+
+        elif self.model_name == "mnasa2":
+            self.backbone = models.mnasnet1_0(
+                weights=models.MNASNet1_0_Weights.IMAGENET1K_V1 if pretrained else None
+            )
 
         else:
             raise ValueError(f"model {self.model_name} not supported..")
@@ -44,6 +59,17 @@ class PretrainedModel(th.nn.Module):
             # MobileNet uses: classifier[3] as final Linear layer
             num_ftrs = self.backbone.classifier[3].in_features
             self.backbone.classifier[3] = th.nn.Linear(num_ftrs, self.num_classes)
+        elif "shufflenet" in self.backbone.__class__.__name__.lower():
+            num_ftrs = self.backbone.fc.in_features
+            self.backbone.fc = th.nn.Linear(num_ftrs, self.num_classes)
+        elif "squeezenet" in self.backbone.__class__.__name__.lower():
+            # SqueezeNet outputs through a Conv2d layer; modify classifier[1]
+            self.backbone.classifier[1] = th.nn.Conv2d(
+                512, self.num_classes, kernel_size=1
+            )
+        elif "mnasnet" in self.backbone.__class__.__name__.lower():
+            num_ftrs = self.backbone.classifier[1].in_features
+            self.backbone.classifier[1] = th.nn.Linear(num_ftrs, self.num_classes)
 
     def forward(self, x):
         # x = self.backbone(x)
