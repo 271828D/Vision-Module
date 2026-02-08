@@ -1,6 +1,6 @@
 # **Stress detection with lightweight CNNs**
 
-Repository for the project related to Stress Detection employing lightweight CNNs. The CNNs architectures used for the task are: MobileNet-v3-small, EfficientNet-B2, EfficientNet-v2-small.
+Repository for the project related to Stress Detection employing lightweight CNNs. The CNNs architectures used for the task are: MobileNet-v3-small, EfficientNet-B2, EfficientNet-V2-small, MNASNet 1, ShuffleNet V2 1x and SqueezeNet V1.1.
 
 ## **Installation**
 ```
@@ -17,12 +17,12 @@ python src/train.py
 ```
 ## **Dataset**
 
-The dataset used was the unimodal version of StressID of face images of the subjects.
+The dataset used was an unimodal subset of face images of subjects from the StressID.
 
 ## **Training**
 
 
-## **Model Architecture**
+## **Model Architectures**
 
 
 ## **Results**
