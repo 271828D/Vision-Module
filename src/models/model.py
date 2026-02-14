@@ -33,7 +33,7 @@ class PretrainedModel(th.nn.Module):
                 weights=models.ShuffleNet_V2_X1_0_Weights.IMAGENET1K_V1 if pretrained else None
             )
 
-        elif self.model_name == "squeezv11":
+        elif self.model_name == "squeezv1":
             self.backbone = models.squeezenet1_1(
                 weights=models.SqueezeNet1_1_Weights.IMAGENET1K_V1 if pretrained else None
             )
@@ -59,14 +59,19 @@ class PretrainedModel(th.nn.Module):
             # MobileNet uses: classifier[3] as final Linear layer
             num_ftrs = self.backbone.classifier[3].in_features
             self.backbone.classifier[3] = th.nn.Linear(num_ftrs, self.num_classes)
-        elif "shufflenet" in self.backbone.__class__.__name__.lower():
+        elif "shufflenetv2" in self.backbone.__class__.__name__.lower():
             num_ftrs = self.backbone.fc.in_features
             self.backbone.fc = th.nn.Linear(num_ftrs, self.num_classes)
         elif "squeezenet" in self.backbone.__class__.__name__.lower():
-            # SqueezeNet outputs through a Conv2d layer; modify classifier[1]
-            self.backbone.classifier[1] = th.nn.Conv2d(
-                512, self.num_classes, kernel_size=1
-            )
+            num_ftrs = self.backbone.classifier[1].in_channels
+            self.backbone.classifier = th.nn.Sequential(
+            th.nn.Dropout(p=0.5),
+            th.nn.Conv2d(512, 512, kernel_size=1),
+            th.nn.ReLU(inplace=True),
+            th.nn.AdaptiveAvgPool2d(1),
+            th.nn.Flatten(),
+            th.nn.Linear(num_ftrs, self.num_classes)
+        )   
         elif "mnasnet" in self.backbone.__class__.__name__.lower():
             num_ftrs = self.backbone.classifier[1].in_features
             self.backbone.classifier[1] = th.nn.Linear(num_ftrs, self.num_classes)
