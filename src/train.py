@@ -7,7 +7,7 @@ import wandb
 from datetime import datetime
 import random
 
-from src.data.dataloader import get_data_loaders
+from src.data.dataloader import get_data_loaders, get_data_loaders_per_subject
 from src.models.model import PretrainedModel
 
 @hydra.main(config_path="../configs", config_name="config", version_base=None)
@@ -27,7 +27,8 @@ def main(cfg: DictConfig) -> None:
     print(f"Starting training at: {start_time.strftime('%Y-%m-%d_%H:%M:%S')}")
 
     # Data
-    train_loader, val_loader = get_data_loaders(**cfg.data)
+    # train_loader, val_loader = get_data_loaders(**cfg.data)
+    train_loader, val_loader = get_data_loaders_per_subject(**cfg.data)
 
     # Model
     model = PretrainedModel(cfg.model.model, num_classes=cfg.model.num_classes, pretrained=cfg.model.pretrained)

@@ -1,11 +1,11 @@
 defaults:
-  - model: effv2s
+  - model: shuffnetv2
   - data: dataloader
   - training: default
 
 seed: 1000
 # device: cpu  # Will be updated in code
-ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-14/15-46-18/2/model_effv2s_1000_20260115_142529.pth # this is for test.py 
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-14/15-46-18/2/model_effv2s_1000_20260115_142529.pth # this is for test.py 
 
 # mobv3s
 # ckpt_path: /home/c-e271828/projects/Vision-Module/src/multirun/2026-01-09/18-10-06/0/model_mobilev3s_42_20260109_181009.pth
@@ -26,7 +26,22 @@ ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-14/15-46-18/2
 # ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-14/15-46-18/1/model_effv2s_777_20260115_030654.pth # this is for test.py 
 # ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-14/15-46-18/2/model_effv2s_1000_20260115_142529.pth # this is for test.py 
 
+# mnasa2
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-24/20-19-42/0/model_mnasa2_42_20260124_201943.pth # this is for test.py
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-25/08-58-01/0/model_mnasa2_69_20260125_085802.pth # this is for test.py
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-25/08-58-01/1/model_mnasa2_555_20260125_150326.pth # this is for test.py
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-25/08-58-01/2/model_mnasa2_777_20260125_202033.pth # this is for test.py
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-25/08-58-01/3/model_mnasa2_1000_20260126_014903.pth # this is for test.py
 
+# shuffnetv2
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-18/15-26-18/0/model_shuffnetv2_42_20260118_152625.pth # this is for test.py
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-18/15-26-18/1/model_shuffnetv2_69_20260118_225159.pth # this is for test.py
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-18/15-26-18/2/model_shuffnetv2_555_20260119_064614.pth # this is for test.py
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-18/15-26-18/3/model_shuffnetv2_777_20260119_132418.pth # this is for test.py
+# ckpt_path: TO DO
+
+# squeeznet
+# TO DO
 
 hydra:
   run:
