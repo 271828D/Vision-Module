@@ -1,7 +1,7 @@
-csv_file: /mnt/data/StressID-img-data/train_per_subject.csv
+csv_file: /mnt/data/StressID-img-data/train.csv
 # test_csv: /mnt/data/StressID-img-data/test.csv # uncomment to run test.py
-# split: train
+split: train
 test_size: 0.1
 batch_size: 28
 num_workers: 4
-random_state: 6666 
+random_state: 6666
