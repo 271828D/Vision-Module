@@ -1,0 +1,3 @@
+model: shuffnetv2
+pretrained: true
+num_classes: 1 

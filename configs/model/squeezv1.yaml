@@ -1,0 +1,3 @@
+model: squeezv1
+pretrained: true
+num_classes: 1 

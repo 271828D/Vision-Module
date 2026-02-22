@@ -5,13 +5,21 @@ import torch as th
 from tqdm import tqdm
 import wandb
 from datetime import datetime
+import random
 
-from src.data.dataloader import get_data_loaders
+from src.data.dataloader import get_data_loaders, get_data_loaders_per_subject
 from src.models.model import PretrainedModel
 
 @hydra.main(config_path="../configs", config_name="config", version_base=None)
 def main(cfg: DictConfig) -> None:
     th.manual_seed(cfg.seed)
+    th.cuda.manual_seed(cfg.seed)
+    th.backends.cudnn.deterministic = True
+    th.backends.cudnn.benchmark = False
+
+    random.seed(cfg.seed)
+    # np.random.seed(cfg.seed)
+
     device = "cuda" if th.cuda.is_available() else "cpu"
     print(f"Using device: {device}")
 
@@ -19,7 +27,8 @@ def main(cfg: DictConfig) -> None:
     print(f"Starting training at: {start_time.strftime('%Y-%m-%d_%H:%M:%S')}")
 
     # Data
-    train_loader, val_loader = get_data_loaders(**cfg.data)
+    # train_loader, val_loader = get_data_loaders(**cfg.data)
+    train_loader, val_loader = get_data_loaders_per_subject(**cfg.data)
 
     # Model
     model = PretrainedModel(cfg.model.model, num_classes=cfg.model.num_classes, pretrained=cfg.model.pretrained)
@@ -33,6 +42,7 @@ def main(cfg: DictConfig) -> None:
     best_val_loss = float('inf')
     patience = 5
     trigger_times = 0
+    min_delta = 0.01 # Define your min_delta threshold
 
     # Timestamped checkpoint
     output_dir = HydraConfig.get().runtime.output_dir
@@ -75,7 +85,7 @@ def main(cfg: DictConfig) -> None:
         
         val_loss /= len(val_loader)
         # Inside training loop, after validation
-        if val_loss < best_val_loss:
+        if val_loss < best_val_loss - min_delta:  # Check for significant improvement
             best_val_loss = val_loss
             th.save(model.state_dict(), checkpoint_path)
             print(f"Saved best model at epoch {epoch+1}: {checkpoint_path}")

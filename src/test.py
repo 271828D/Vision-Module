@@ -5,10 +5,18 @@ import hydra
 from tqdm import tqdm
 from src.data.dataloader import get_test_data_loader
 from src.models.model import PretrainedModel
+import random
 
 @hydra.main(config_path="../configs", config_name="config", version_base=None)
 def test(cfg: DictConfig) -> None:
     device = "cuda" if th.cuda.is_available() else "cpu"
+
+    # Set seed and deterministic behavior
+    th.manual_seed(cfg.seed)
+    th.cuda.manual_seed_all(cfg.seed)
+    th.backends.cudnn.deterministic = True
+    th.backends.cudnn.benchmark = False
+    random.seed(cfg.seed)
     
     model = PretrainedModel(
         model=cfg.model.model,
@@ -36,8 +44,8 @@ def test(cfg: DictConfig) -> None:
             progress_bar.update(1)
 
     df = pd.DataFrame(results, columns=["file", "predicted_score", "predicted_label", "true_label"])
-    df.to_csv("predictions.csv", index=False)
-    print("Saved predictions.csv")
+    df.to_csv(f"predictions_{cfg.model.model}_{cfg.seed}.csv", index=False)   
+    print(f"Saved ../predictions_{cfg.model.model}_{cfg.seed}.csv")
 
 if __name__ == "__main__":
     test()   

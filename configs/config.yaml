@@ -1,11 +1,47 @@
 defaults:
-  - model: effb2
+  - model: shuffnetv2
   - data: dataloader
   - training: default
 
-seed: 42
+seed: 1000
 # device: cpu  # Will be updated in code
-ckpt_path: /home/x271828/projects/DataPreprocessing/model_effb2_20251227_222421.pth  # this is for test.py
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-14/15-46-18/2/model_effv2s_1000_20260115_142529.pth # this is for test.py 
+
+# mobv3s
+# ckpt_path: /home/c-e271828/projects/Vision-Module/src/multirun/2026-01-09/18-10-06/0/model_mobilev3s_42_20260109_181009.pth
+# ckpt_path: /home/c-e271828/projects/Vision-Module/src/multirun/2026-01-09/18-10-06/1/model_mobilev3s_69_20260110_081747.pth
+# ckpt_path: /home/c-e271828/projects/Vision-Module/src/multirun/2026-01-09/18-10-06/2/model_mobilev3s_555_20260110_205151.pth
+# ckpt_path: /home/c-e271828/projects/Vision-Module/src/multirun/2026-01-09/18-10-06/3/model_mobilev3s_777_20260111_075415.pth
+# ckpt_path: /home/c-e271828/projects/Vision-Module/src/multirun/2026-01-09/18-10-06/4/model_mobilev3s_1000_20260112_010918.pth # this is for test.py
+
+# effb2
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-16/08-06-31/0/model_effb2_555_20260116_080639.pth
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-16/08-06-31/1/model_effb2_777_20260116_125024.pth # this is for test.py 
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-16/08-06-31/2/model_effb2_1000_20260116_193350.pth # this is for test.py 
+
+# effv2s
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-13/07-45-14/0/model_effv2s_42_20260113_074533.pth # this is for test.py 
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-13/07-45-14/1/model_effv2s_69_20260113_205750.pth # this is for test.py 
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-14/15-46-18/0/model_effv2s_555_20260114_154620.pth # this is for test.py 
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-14/15-46-18/1/model_effv2s_777_20260115_030654.pth # this is for test.py 
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-14/15-46-18/2/model_effv2s_1000_20260115_142529.pth # this is for test.py 
+
+# mnasa2
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-24/20-19-42/0/model_mnasa2_42_20260124_201943.pth # this is for test.py
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-25/08-58-01/0/model_mnasa2_69_20260125_085802.pth # this is for test.py
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-25/08-58-01/1/model_mnasa2_555_20260125_150326.pth # this is for test.py
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-25/08-58-01/2/model_mnasa2_777_20260125_202033.pth # this is for test.py
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-25/08-58-01/3/model_mnasa2_1000_20260126_014903.pth # this is for test.py
+
+# shuffnetv2
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-18/15-26-18/0/model_shuffnetv2_42_20260118_152625.pth # this is for test.py
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-18/15-26-18/1/model_shuffnetv2_69_20260118_225159.pth # this is for test.py
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-18/15-26-18/2/model_shuffnetv2_555_20260119_064614.pth # this is for test.py
+# ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-18/15-26-18/3/model_shuffnetv2_777_20260119_132418.pth # this is for test.py
+# ckpt_path: TO DO
+
+# squeeznet
+# TO DO
 
 hydra:
   run:
