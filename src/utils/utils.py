@@ -68,6 +68,7 @@ def build_optimizer(model, cfg):
 def save_best_model(val_loss, best_val_loss, model, checkpoint_path):
     """Save model if validation loss improves."""
     if val_loss < best_val_loss:
+        print(f"Saving best model to: {checkpoint_path}")
         th.save(model.state_dict(), checkpoint_path)
         return val_loss
     return best_val_loss
