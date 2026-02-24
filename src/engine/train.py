@@ -13,6 +13,7 @@ from src.utils.utils import (
     validate,
     save_best_model,
     set_seed,
+    EarlyStopping
 )
 
 
@@ -43,6 +44,7 @@ def main(cfg: DictConfig) -> None:
 
     # Training setup
     best_val_loss = float("inf")
+    early_stopping = EarlyStopping(patience=5, min_delta=0.001)
     output_dir = HydraConfig.get().runtime.output_dir
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     checkpoint_path = (
@@ -64,6 +66,10 @@ def main(cfg: DictConfig) -> None:
         best_val_loss = save_best_model(
             val_loss, best_val_loss, model, checkpoint_path
         )
+        # Check early stopping
+        if early_stopping(val_loss):
+            print(f"Early stopping at epoch {epoch+1}")
+            break
 
         wandb.log({"train_loss": train_loss, "val_loss": val_loss})
         print(f"Epoch {epoch+1}, Val Loss: {val_loss:.4f}")
