@@ -70,6 +70,12 @@ def main(cfg: DictConfig) -> None:
         if early_stopping(val_loss):
             print(f"Early stopping at epoch {epoch+1}")
             break
+            wandb.log({"train_loss": train_loss, "val_loss": val_loss})
+            wandb.finish()
+            # End time
+            end_time = datetime.now()
+            print(f"Finished training at: {end_time.strftime('%Y-%m-%d_%H:%M:%S')}")
+            print(f"Total training time: {end_time - start_time}")
 
         wandb.log({"train_loss": train_loss, "val_loss": val_loss})
         print(f"Epoch {epoch+1}, Val Loss: {val_loss:.4f}")
