@@ -14,7 +14,7 @@ source .venv/bin/activate  # Unix
 uv sync
 
 # Run training
-python src/train.py
+python src/engine/train.py
 ```
 
 ## **Dataset**
