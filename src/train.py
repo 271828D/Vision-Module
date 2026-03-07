@@ -7,8 +7,9 @@ import wandb
 from datetime import datetime
 import random
 
-from src.data.dataloader import get_data_loaders, get_data_loaders_per_subject
+from src.data.dataloader import get_data_loaders_per_subject
 from src.models.model import PretrainedModel
+
 
 @hydra.main(config_path="../configs", config_name="config", version_base=None)
 def main(cfg: DictConfig) -> None:
@@ -31,30 +32,38 @@ def main(cfg: DictConfig) -> None:
     train_loader, val_loader = get_data_loaders_per_subject(**cfg.data)
 
     # Model
-    model = PretrainedModel(cfg.model.model, num_classes=cfg.model.num_classes, pretrained=cfg.model.pretrained)
+    model = PretrainedModel(
+        cfg.model.model,
+        num_classes=cfg.model.num_classes,
+        pretrained=cfg.model.pretrained,
+    )
     model.to(device)
 
     # Optimizer
-    optimizer = th.optim.Adam(model.parameters(), lr=cfg.training.lr, betas=(.99, .999), eps=1e-8)
+    optimizer = th.optim.Adam(
+        model.parameters(), lr=cfg.training.lr, betas=(0.99, 0.999), eps=1e-8
+    )
     criterion = th.nn.BCEWithLogitsLoss()
 
     # Early stopping
-    best_val_loss = float('inf')
+    best_val_loss = float("inf")
     patience = 5
     trigger_times = 0
-    min_delta = 0.01 # Define your min_delta threshold
+    min_delta = 0.01  # Define your min_delta threshold
 
     # Timestamped checkpoint
     output_dir = HydraConfig.get().runtime.output_dir
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    checkpoint_path = f"{output_dir}/model_{cfg.model.model}_{cfg.seed}_{timestamp}.pth"
+    checkpoint_path = (
+        f"{output_dir}/model_{cfg.model.model}_{cfg.seed}_{timestamp}.pth"
+    )
 
     # Convert config to a regular dict, avoiding unsupported keys
     safe_cfg = OmegaConf.to_container(cfg, resolve=True)
 
     # Wandb
     wandb.init(project="stress-project", config=safe_cfg)
-    
+
     # Training loop
     for epoch in range(cfg.training.epochs):
         model.train()
@@ -75,17 +84,21 @@ def main(cfg: DictConfig) -> None:
         model.eval()
         val_loss = 0.0
         with th.no_grad():
-            progress_bar_val = tqdm(val_loader, desc="Validating", total=len(val_loader))
+            progress_bar_val = tqdm(
+                val_loader, desc="Validating", total=len(val_loader)
+            )
             for images, labels in progress_bar_val:
                 images, labels = images.to(device), labels.to(device)
                 outputs = model(images).squeeze()
                 loss = criterion(outputs, labels)
                 val_loss += loss.item()
                 progress_bar_val.set_postfix(val_loss=loss.item())
-        
+
         val_loss /= len(val_loader)
         # Inside training loop, after validation
-        if val_loss < best_val_loss - min_delta:  # Check for significant improvement
+        if (
+            val_loss < best_val_loss - min_delta
+        ):  # Check for significant improvement
             best_val_loss = val_loss
             th.save(model.state_dict(), checkpoint_path)
             print(f"Saved best model at epoch {epoch+1}: {checkpoint_path}")
@@ -95,7 +108,12 @@ def main(cfg: DictConfig) -> None:
             if trigger_times >= patience:
                 print(f"Early stopping at epoch {epoch+1}")
                 break
-        wandb.log({"train_loss": train_loss/len(train_loader), "val_loss": val_loss})
+        wandb.log(
+            {
+                "train_loss": train_loss / len(train_loader),
+                "val_loss": val_loss,
+            }
+        )
         print(f"Epoch {epoch+1}, Val Loss: {val_loss:.4f}")
 
     # End time
@@ -105,5 +123,6 @@ def main(cfg: DictConfig) -> None:
 
     wandb.finish()
 
+
 if __name__ == "__main__":
-    main()   
+    main()

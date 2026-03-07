@@ -73,11 +73,12 @@ def save_best_model(val_loss, best_val_loss, model, checkpoint_path):
         return val_loss
     return best_val_loss
 
+
 class EarlyStopping:
     def __init__(self, patience=5, min_delta=0.001):
         self.patience = patience
         self.min_delta = min_delta
-        self.best_loss = float('inf')
+        self.best_loss = float("inf")
         self.counter = 0
 
     def __call__(self, val_loss):
@@ -87,4 +88,4 @@ class EarlyStopping:
             return False  # Continue training
         else:
             self.counter += 1
-            return self.counter >= self.patience  # Stop if patience exceeded   
+            return self.counter >= self.patience  # Stop if patience exceeded

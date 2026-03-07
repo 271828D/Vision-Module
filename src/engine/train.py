@@ -13,7 +13,7 @@ from src.utils.utils import (
     validate,
     save_best_model,
     set_seed,
-    EarlyStopping
+    EarlyStopping,
 )
 
 
@@ -73,10 +73,11 @@ def main(cfg: DictConfig) -> None:
             wandb.finish()
             # End time
             end_time = datetime.now()
-            print(f"Finished training at: {end_time.strftime('%Y-%m-%d_%H:%M:%S')}")
+            print(
+                f"Finished training: {end_time.strftime('%Y-%m-%d_%H:%M:%S')}"
+            )
             print(f"Total training time: {end_time - start_time}")
             break
-            
 
         wandb.log({"train_loss": train_loss, "val_loss": val_loss})
         print(f"Epoch {epoch+1}, Val Loss: {val_loss:.4f}")
