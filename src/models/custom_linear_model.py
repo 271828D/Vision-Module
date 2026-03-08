@@ -14,7 +14,7 @@ class ParallelConvBlock(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2),
         )
         self.right_branch = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size=1),
+            nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=2),
             nn.BatchNorm2d(out_channels),
         )
 
@@ -25,7 +25,7 @@ class ParallelConvBlock(nn.Module):
 
 
 class CustomCNN(nn.Module):
-    def __init__(self, num_classes=1):
+    def __init__(self, num_classes: int = 1, model: str = "cuslin"):
         super(CustomCNN, self).__init__()
         # Initial Conv+BN layers
         self.initial = nn.Sequential(

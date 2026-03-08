@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - model: shuffnetv2
+  - model: cuslin
   - data: dataloader
   - training: default
 
@@ -44,6 +44,13 @@ seed: 1000
 # squeeznet
 # TO DO
 
+# hydra:
+#   run:
+#     dir: outputs/${model.model}/${seed}
+
 hydra:
   run:
-    dir: outputs/${model.model}/${seed}
+    dir: outputs/${seed}
+  sweep:
+    dir: multirun/${seed}
+    subdir: ${hydra.job.num}

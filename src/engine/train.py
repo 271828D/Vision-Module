@@ -9,7 +9,8 @@ from src.data.dataloader import (
     # get_data_loaders,
     get_data_loaders_per_subject,
 )
-from src.models.model import PretrainedModel
+
+# from src.models.model import PretrainedModel
 from src.utils.utils import (
     build_optimizer,
     train_epoch,
@@ -37,11 +38,12 @@ def main(cfg: DictConfig) -> None:
     train_loader, val_loader = get_data_loaders_per_subject(**cfg.data)
 
     # Model
-    model = PretrainedModel(
-        cfg.model.model,
-        num_classes=cfg.model.num_classes,
-        pretrained=cfg.model.pretrained,
-    )
+    # model = PretrainedModel(
+    #     cfg.model.model,
+    #     num_classes=cfg.model.num_classes,
+    #     pretrained=cfg.model.pretrained,
+    # )
+    model = hydra.utils.instantiate(cfg.model)
     model.to(device)
     optimizer = build_optimizer(model, cfg)
     criterion = th.nn.BCEWithLogitsLoss()
