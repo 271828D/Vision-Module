@@ -13,6 +13,7 @@ def get_data_loaders(
     num_workers=4,
     transform=None,
     random_state=42,
+    image_size=224,
 ):
     df = pd.read_csv(csv_file, sep=";")
     train_df, val_df = train_test_split(
@@ -24,8 +25,15 @@ def get_data_loaders(
 
     transform_data_aug = v2.Compose(
         [
-            v2.Resize((224, 224)),
-            v2.RandomHorizontalFlip(p=0.7),
+            v2.Resize((image_size, image_size)),
+            v2.RandomHorizontalFlip(p=0.5),
+            v2.RandomRotation(10),  # Slight rotation for pose variation
+            v2.ColorJitter(
+                brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1
+            ),  # Realistic lighting changes
+            v2.RandomResizedCrop(
+                image_size, scale=(0.8, 1.0)
+            ),  # Zoom in/out slightly
             v2.ToTensor(),
             v2.Normalize(
                 mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
@@ -35,7 +43,7 @@ def get_data_loaders(
 
     transform_val = v2.Compose(
         [
-            v2.Resize((224, 224)),
+            v2.Resize((image_size, image_size)),
             v2.ToTensor(),
             v2.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
         ]
@@ -54,7 +62,7 @@ def get_data_loaders(
     val_loader = DataLoader(
         val_dataset,
         batch_size=batch_size,
-        shuffle=True,
+        shuffle=False,
         num_workers=num_workers,
         pin_memory=True,
     )
@@ -63,7 +71,12 @@ def get_data_loaders(
 
 
 def get_data_loaders_per_subject(
-    csv_file: str, test_size=0.1, batch_size=32, num_workers=4, random_state=42
+    csv_file: str,
+    test_size=0.1,
+    batch_size=32,
+    num_workers=4,
+    random_state=42,
+    image_size=224,
 ):
 
     df = pd.read_csv(csv_file, sep=";")
@@ -89,7 +102,7 @@ def get_data_loaders_per_subject(
     # 4. Define image transforms
     transform_train = v2.Compose(
         [
-            v2.Resize((224, 224)),
+            v2.Resize((image_size, image_size)),
             v2.RandomHorizontalFlip(p=0.7),
             v2.ToTensor(),
             v2.Normalize(
@@ -100,7 +113,7 @@ def get_data_loaders_per_subject(
 
     transform_val = v2.Compose(
         [
-            v2.Resize((224, 224)),
+            v2.Resize((image_size, image_size)),
             v2.ToTensor(),
             v2.Normalize(
                 mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
@@ -135,7 +148,7 @@ def get_test_data_loader(cfg_data):
     df = pd.read_csv(cfg_data.test_csv, sep=";")  # cfg_data
     transform = v2.Compose(
         [
-            v2.Resize((224, 224)),
+            v2.Resize((cfg_data.image_size, cfg_data.image_size)),
             v2.ToTensor(),
             v2.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
         ]

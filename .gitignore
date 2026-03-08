@@ -38,4 +38,4 @@ logs/
 *.csv
 .markdownlint.json
 
-/configs/*
+/configs

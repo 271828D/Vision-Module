@@ -5,7 +5,10 @@ import torch as th
 import wandb
 from datetime import datetime
 
-from src.data.dataloader import get_data_loaders
+from src.data.dataloader import (
+    # get_data_loaders,
+    get_data_loaders_per_subject,
+)
 from src.models.model import PretrainedModel
 from src.utils.utils import (
     build_optimizer,
@@ -30,7 +33,8 @@ def main(cfg: DictConfig) -> None:
     print(f"Starting training at: {start_time.strftime('%Y-%m-%d_%H:%M:%S')}")
 
     # Data
-    train_loader, val_loader = get_data_loaders(**cfg.data)
+    # train_loader, val_loader = get_data_loaders(**cfg.data)
+    train_loader, val_loader = get_data_loaders_per_subject(**cfg.data)
 
     # Model
     model = PretrainedModel(
@@ -73,9 +77,7 @@ def main(cfg: DictConfig) -> None:
             wandb.finish()
             # End time
             end_time = datetime.now()
-            print(
-                f"Finished training: {end_time.strftime('%Y-%m-%d_%H:%M:%S')}"
-            )
+            print(f"Finished train: {end_time.strftime('%Y-%m-%d_%H:%M:%S')}")
             print(f"Total training time: {end_time - start_time}")
             break
 

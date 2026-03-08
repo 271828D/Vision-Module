@@ -40,7 +40,7 @@ class PretrainedModel(th.nn.Module):
             )
 
         elif self.model_name == "mobilev3s":
-            # ✅ MODIFICATION: Use width_mult=0.5 to shrink the model
+            # MODIFICATION: Use width_mult=0.5 to shrink the model
             width_mult = 0.5
             # Load full model first (width_mult=1.0) with pretrained weights
             full_model = models.mobilenet_v3_small(
@@ -50,7 +50,7 @@ class PretrainedModel(th.nn.Module):
             self.backbone = models.mobilenet_v3_small(
                 weights=None, width_mult=width_mult
             )
-            # ✅ Copy matching layers from full to tiny model
+            # Copy matching layers from full to tiny model
             for old_param, new_param in zip(
                 full_model.parameters(), self.backbone.parameters()
             ):
