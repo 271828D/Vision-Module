@@ -4,6 +4,6 @@ csv_file: /mnt/data/StressID-img-mtcnn-data/train_per_subject.csv
 # split: train
 test_size: 0.1
 batch_size: 32
-image_size: 224
+image_size: 128
 num_workers: 4
 random_state: 6666
