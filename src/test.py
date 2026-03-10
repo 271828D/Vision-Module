@@ -7,6 +7,7 @@ from src.data.dataloader import get_test_data_loader
 from src.models.model import PretrainedModel
 import random
 
+
 @hydra.main(config_path="../configs", config_name="config", version_base=None)
 def test(cfg: DictConfig) -> None:
     device = "cuda" if th.cuda.is_available() else "cpu"
@@ -17,12 +18,16 @@ def test(cfg: DictConfig) -> None:
     th.backends.cudnn.deterministic = True
     th.backends.cudnn.benchmark = False
     random.seed(cfg.seed)
-    
-    model = PretrainedModel(
-        model=cfg.model.model,
-        num_classes=cfg.model.num_classes,
-        pretrained=False
-    ).to(device).eval()
+
+    model = (
+        PretrainedModel(
+            model=cfg.model.model,
+            num_classes=cfg.model.num_classes,
+            pretrained=False,
+        )
+        .to(device)
+        .eval()
+    )
 
     checkpoint = th.load(cfg.ckpt_path, map_location=device)
     model.load_state_dict(checkpoint)
@@ -40,12 +45,18 @@ def test(cfg: DictConfig) -> None:
             if scores.ndim == 0:
                 scores = [scores]
                 pred_labels = [pred_labels]
-            results.extend(zip(paths, scores, pred_labels, labels.cpu().numpy()))
+            results.extend(
+                zip(paths, scores, pred_labels, labels.cpu().numpy())
+            )
             progress_bar.update(1)
 
-    df = pd.DataFrame(results, columns=["file", "predicted_score", "predicted_label", "true_label"])
-    df.to_csv(f"predictions_{cfg.model.model}_{cfg.seed}.csv", index=False)   
+    df = pd.DataFrame(
+        results,
+        columns=["file", "predicted_score", "predicted_label", "true_label"],
+    )
+    df.to_csv(f"predictions_{cfg.model.model}_{cfg.seed}.csv", index=False)
     print(f"Saved ../predictions_{cfg.model.model}_{cfg.seed}.csv")
 
+
 if __name__ == "__main__":
-    test()   
+    test()

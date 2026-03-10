@@ -1,52 +1,102 @@
 import torch as th
 from torchvision import models
 
+
 class PretrainedModel(th.nn.Module):
-    def __init__(self, model:str, num_classes:int = 1, pretrained:bool = True): 
+    def __init__(
+        self, model: str, num_classes: int = 1, pretrained: bool = True
+    ):
         super().__init__()
 
         self.model_name = model
         self.num_classes = num_classes
         self.pretrained = pretrained
-        # self.sigmoid = th.nn.Sigmoid()
 
         if self.model_name == "effv2s":
-            self.backbone = models.efficientnet_v2_s(weights=models.EfficientNet_V2_S_Weights.IMAGENET1K_V1 if pretrained else None)
-            
+            self.backbone = models.efficientnet_v2_s(
+                weights=(
+                    models.EfficientNet_V2_S_Weights.IMAGENET1K_V1
+                    if pretrained
+                    else None
+                )
+            )
+
         elif self.model_name == "effv2l":
-            self.backbone = models.efficientnet_v2_l(weights=models.EfficientNet_V2_L_Weights.IMAGENET1K_V1 if pretrained else None)
+            self.backbone = models.efficientnet_v2_l(
+                weights=(
+                    models.EfficientNet_V2_L_Weights.IMAGENET1K_V1
+                    if pretrained
+                    else None
+                )
+            )
 
         elif self.model_name == "effb2":
-            self.backbone = models.efficientnet_b2(weights=models.EfficientNet_B2_Weights.IMAGENET1K_V1 if pretrained else None)
-
-        elif self.model_name == "effb3":
-            self.backbone = models.efficientnet_b3(weights=models.EfficientNet_B3_Weights.IMAGENET1K_V1 if pretrained else None)
+            self.backbone = models.efficientnet_b2(
+                weights=(
+                    models.EfficientNet_B2_Weights.IMAGENET1K_V1
+                    if pretrained
+                    else None
+                )
+            )
 
         elif self.model_name == "mobilev3s":
-            self.backbone = models.mobilenet_v3_small(weights=models.MobileNet_V3_Small_Weights.IMAGENET1K_V1 if pretrained else None)
+            # MODIFICATION: Use width_mult=0.5 to shrink the model
+            width_mult = 0.5
+            # Load full model first (width_mult=1.0) with pretrained weights
+            full_model = models.mobilenet_v3_small(
+                weights=models.MobileNet_V3_Small_Weights.IMAGENET1K_V1
+            )
+            # Create tiny model (width_mult=0.5), no pretrained yet
+            self.backbone = models.mobilenet_v3_small(
+                weights=None, width_mult=width_mult
+            )
+            # Copy matching layers from full to tiny model
+            for old_param, new_param in zip(
+                full_model.parameters(), self.backbone.parameters()
+            ):
+                if old_param.shape == new_param.shape:
+                    new_param.data.copy_(old_param.data)
 
         elif self.model_name == "mobilev3l":
-            self.backbone = models.mobilenet_v3_large(weights=models.MobileNet_V3_Large_Weights.IMAGENET1K_V1 if pretrained else None)
+            self.backbone = models.mobilenet_v3_large(
+                weights=(
+                    models.MobileNet_V3_Large_Weights.IMAGENET1K_V1
+                    if pretrained
+                    else None
+                )
+            )
 
         elif self.model_name == "shuffnetv2":
             self.backbone = models.shufflenet_v2_x1_0(
-                weights=models.ShuffleNet_V2_X1_0_Weights.IMAGENET1K_V1 if pretrained else None
+                weights=(
+                    models.ShuffleNet_V2_X1_0_Weights.IMAGENET1K_V1
+                    if pretrained
+                    else None
+                )
             )
 
         elif self.model_name == "squeezv1":
             self.backbone = models.squeezenet1_1(
-                weights=models.SqueezeNet1_1_Weights.IMAGENET1K_V1 if pretrained else None
+                weights=(
+                    models.SqueezeNet1_1_Weights.IMAGENET1K_V1
+                    if pretrained
+                    else None
+                )
             )
 
         elif self.model_name == "mnasa2":
             self.backbone = models.mnasnet1_0(
-                weights=models.MNASNet1_0_Weights.IMAGENET1K_V1 if pretrained else None
+                weights=(
+                    models.MNASNet1_0_Weights.IMAGENET1K_V1
+                    if pretrained
+                    else None
+                )
             )
 
         else:
             raise ValueError(f"model {self.model_name} not supported..")
-        
-        # Unfreeze all layers 
+
+        # Unfreeze all layers
         for param in self.backbone.parameters():
             param.requires_grad = True
 
@@ -54,29 +104,34 @@ class PretrainedModel(th.nn.Module):
         if "efficientnet" in self.backbone.__class__.__name__.lower():
             # EfficientNet uses: classifier[1] as final Linear layer
             num_ftrs = self.backbone.classifier[1].in_features
-            self.backbone.classifier[1] = th.nn.Linear(num_ftrs, self.num_classes)
+            self.backbone.classifier[1] = th.nn.Linear(
+                num_ftrs, self.num_classes
+            )
         elif "mobile" in self.backbone.__class__.__name__.lower():
             # MobileNet uses: classifier[3] as final Linear layer
             num_ftrs = self.backbone.classifier[3].in_features
-            self.backbone.classifier[3] = th.nn.Linear(num_ftrs, self.num_classes)
+            self.backbone.classifier[3] = th.nn.Linear(
+                num_ftrs, self.num_classes
+            )
         elif "shufflenetv2" in self.backbone.__class__.__name__.lower():
             num_ftrs = self.backbone.fc.in_features
             self.backbone.fc = th.nn.Linear(num_ftrs, self.num_classes)
         elif "squeezenet" in self.backbone.__class__.__name__.lower():
             num_ftrs = self.backbone.classifier[1].in_channels
             self.backbone.classifier = th.nn.Sequential(
-            th.nn.Dropout(p=0.5),
-            th.nn.Conv2d(512, 512, kernel_size=1),
-            th.nn.ReLU(inplace=True),
-            th.nn.AdaptiveAvgPool2d(1),
-            th.nn.Flatten(),
-            th.nn.Linear(num_ftrs, self.num_classes)
-        )   
+                th.nn.Dropout(p=0.5),
+                th.nn.Conv2d(512, 512, kernel_size=1),
+                th.nn.ReLU(inplace=True),
+                th.nn.AdaptiveAvgPool2d(1),
+                th.nn.Flatten(),
+                th.nn.Linear(num_ftrs, self.num_classes),
+            )
         elif "mnasnet" in self.backbone.__class__.__name__.lower():
             num_ftrs = self.backbone.classifier[1].in_features
-            self.backbone.classifier[1] = th.nn.Linear(num_ftrs, self.num_classes)
+            self.backbone.classifier[1] = th.nn.Linear(
+                num_ftrs, self.num_classes
+            )
 
     def forward(self, x):
         # x = self.backbone(x)
         return self.backbone(x)
-    

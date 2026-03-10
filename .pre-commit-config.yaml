@@ -15,8 +15,14 @@ repos:
       - id: black
         language_version: python3
 
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.2.1
+    hooks:
+      - id: autoflake
+        args: [--remove-all-unused-imports, --in-place]
+
   - repo: https://github.com/pycqa/flake8
     rev: 7.0.0
     hooks:
       - id: flake8
-        args: ['--max-line-length=88']
+        args: ['--max-line-length=79']

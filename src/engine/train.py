@@ -5,7 +5,11 @@ import torch as th
 import wandb
 from datetime import datetime
 
-from src.data.dataloader import get_data_loaders
+from src.data.dataloader import (
+    get_data_loaders,
+    # get_data_loaders_per_subject,
+)
+
 from src.models.model import PretrainedModel
 from src.utils.utils import (
     build_optimizer,
@@ -13,6 +17,7 @@ from src.utils.utils import (
     validate,
     save_best_model,
     set_seed,
+    EarlyStopping,
 )
 
 
@@ -30,6 +35,7 @@ def main(cfg: DictConfig) -> None:
 
     # Data
     train_loader, val_loader = get_data_loaders(**cfg.data)
+    # train_loader, val_loader = get_data_loaders_per_subject(**cfg.data)
 
     # Model
     model = PretrainedModel(
@@ -37,12 +43,14 @@ def main(cfg: DictConfig) -> None:
         num_classes=cfg.model.num_classes,
         pretrained=cfg.model.pretrained,
     )
+    # model = hydra.utils.instantiate(cfg.model)
     model.to(device)
     optimizer = build_optimizer(model, cfg)
     criterion = th.nn.BCEWithLogitsLoss()
 
     # Training setup
     best_val_loss = float("inf")
+    early_stopping = EarlyStopping(patience=5, min_delta=0.001)
     output_dir = HydraConfig.get().runtime.output_dir
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     checkpoint_path = (
@@ -64,6 +72,16 @@ def main(cfg: DictConfig) -> None:
         best_val_loss = save_best_model(
             val_loss, best_val_loss, model, checkpoint_path
         )
+        # Check early stopping
+        if early_stopping(val_loss):
+            print(f"Early stopping at epoch {epoch+1}")
+            wandb.log({"train_loss": train_loss, "val_loss": val_loss})
+            wandb.finish()
+            # End time
+            end_time = datetime.now()
+            print(f"Finished train: {end_time.strftime('%Y-%m-%d_%H:%M:%S')}")
+            print(f"Total training time: {end_time - start_time}")
+            break
 
         wandb.log({"train_loss": train_loss, "val_loss": val_loss})
         print(f"Epoch {epoch+1}, Val Loss: {val_loss:.4f}")
