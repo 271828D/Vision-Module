@@ -1,8 +1,10 @@
 # csv_file: /mnt/data/StressID-img-mtcnn-data/train.csv
-csv_file: /mnt/data/StressID-img-mtcnn-data/train_per_subject.csv
-# test_csv: /mnt/data/StressID-img-data/test.csv # uncomment to run test.py
+# csv_file: /mnt/data/StressID-img-mtcnn-data/train_per_subject.csv
+test_csv: /mnt/data/StressID-img-mtcnn-data/test_split.csv # uncomment to run test.py
 # split: train
-test_size: 0.1
+# test_size: 0.1
+train_csv: "/mnt/data/StressID-img-mtcnn-data/train_split.csv"
+val_csv: "/mnt/data/StressID-img-mtcnn-data/val_split.csv"
 batch_size: 32
 image_size: 128
 num_workers: 4

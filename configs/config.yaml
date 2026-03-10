@@ -8,6 +8,8 @@ seed: 1000
 # device: cpu  # Will be updated in code
 # ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/2026-01-14/15-46-18/2/model_effv2s_1000_20260115_142529.pth # this is for test.py
 
+ckpt_path: /home/c-e271828/projects/Vision-Module/multirun/69/0/model_mobilev3s_69_20260309_203209.pth
+
 # mobv3s
 # ckpt_path: /home/c-e271828/projects/Vision-Module/src/multirun/2026-01-09/18-10-06/0/model_mobilev3s_42_20260109_181009.pth
 # ckpt_path: /home/c-e271828/projects/Vision-Module/src/multirun/2026-01-09/18-10-06/1/model_mobilev3s_69_20260110_081747.pth
