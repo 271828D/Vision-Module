@@ -1,13 +1,13 @@
 import pandas as pd
 from torch.utils.data import DataLoader
 from torchvision.transforms import v2
-from sklearn.model_selection import train_test_split, GroupShuffleSplit
+from sklearn.model_selection import GroupShuffleSplit
 from src.data.dataset import CustomDataset
 
 
 def get_data_loaders(
-    csv_file: str,
-    split="train",
+    train_csv: str,
+    val_csv: str,
     test_size=0.1,
     batch_size=32,
     num_workers=4,
@@ -15,13 +15,8 @@ def get_data_loaders(
     random_state=42,
     image_size=224,
 ):
-    df = pd.read_csv(csv_file, sep=";")
-    train_df, val_df = train_test_split(
-        df,
-        test_size=test_size,
-        stratify=df["label"],
-        random_state=random_state,
-    )
+    train_df = pd.read_csv(train_csv, sep=";")
+    val_df = pd.read_csv(val_csv, sep=";")
 
     transform_data_aug = v2.Compose(
         [
